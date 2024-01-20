@@ -112,7 +112,7 @@ def myt_page():
         <</SYS>>
         {user_input_message} [/INST]"""
         # Specifies the max tokens
-        max_tokens = 10
+        max_tokens = 1000
         # Generates the information
         output = model(prompt, max_tokens=max_tokens, echo=True)
         # Printing the output
