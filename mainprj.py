@@ -18,7 +18,19 @@ def home_page():
 
     homeimg = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Homebtn.png")
     homebtn = Button(home, image=homeimg, highlightthickness=0, borderwidth=0)
-    homebtn.grid(row=0, column=1, columnspan=1)
+    homebtn.grid(row=1, column=0, columnspan=1)
+
+    recomimg = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Recombtn.png")
+    recombtn = Button(home, image=recomimg, highlightthickness=0, borderwidth=0)
+    recombtn.grid(row=1, column=1, columnspan=1)
+
+    tripimg = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Tripbtn.png")
+    tripbtn = Button(home, image=tripimg, highlightthickness=0, borderwidth=0)
+    tripbtn.grid(row=1, column=2, columnspan=1)
+
+    reviewimg = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Reviewbtn.png")
+    reviewbtn = Button(home, image=reviewimg, highlightthickness=0, borderwidth=0)
+    reviewbtn.grid(row=1, column=3, columnspan=1)
 
     home.mainloop()
 
