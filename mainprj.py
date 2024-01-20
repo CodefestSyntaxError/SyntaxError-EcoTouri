@@ -106,15 +106,15 @@ def myt_page():
         model = Llama(model_path=model_path)
 
         # Training message and user input message for generating information
-        training_message = "You are a factual and reliable assistant that provides true information and text on various Eco-sustainable hotels, restaurants, best modes of sustainable transportation, various places to see and observe in the area and also the carbon footprint that has been emitted through this entire tourist place vacation plan."
-        user_input_message = f"{place}:The Best eco-friendly hotel to visit,the best eco-friendly transport methods,the best eco-friendly restaurant, the best eco-friendly places to visit in with a budget of {budget} with the interests {interest} with a total of {family} people in their travel group, traveling for a total of {days}."
+        training_message = "(Note: If any of the inputs seems to be incorrect, display error input not valid and stop generation)You are a factual and reliable assistant that provides true information and text on various Eco-sustainable hotels, restaurants, best modes of sustainable transportation, various places to see and observe in the area and also the carbon footprint that has been emitted through this entire tourist place vacation plan."
+        user_input_message = f"{place}:3 Best eco-friendly hotel to visit,2 best eco-friendly transport methods,3 best eco-friendly restaurant, the 4 eco-friendly places to visit in with a budget of {budget} with the interests/hobby {interest} with a total of {family} people in their travel group, traveling for a total of {days}, currently living in {Location}, at the age of {Age}, with the Interests {Interest}.Please take all into consideration and respond"
         # Initiates the Llama to generate the information
         prompt = f"""<s>[INST] <<SYS>>
         {training_message}
         <</SYS>>
         {user_input_message} [/INST]"""
         # Specifies the max tokens
-        max_tokens = 2000
+        max_tokens = 6000
         # Generates the information
         output = model(prompt, max_tokens=max_tokens, echo=True)
         plain_string = str(output)
@@ -204,58 +204,141 @@ def brochure_page():
     brochureheadimg = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Brochurehead.png")
     brochurehead = Label(brochure, image=brochureheadimg, highlightthickness=0, borderwidth=0)
     brochurehead.grid(row=0,column=0,columnspan=4)
-    outputlabel = tk.Text(brochure, height=20, width=45, state=tk.NORMAL, bg="#1D3C37", fg="#F8D26B")
+    headingimage = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Heading.png")
+    headinglabel = Label(brochure, image=headingimage, highlightthickness=0, borderwidth=0)
+    headinglabel.grid(row=0, column=0, columnspan=4)
+    homeimg = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Homebtn.png")
+    homebtn = Button(brochure, image=homeimg, highlightthickness=0, borderwidth=0)
+    homebtn.grid(row=1, column=0, columnspan=1)
+    recomimg = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Recombtn.png")
+    recombtn = Button(brochure, image=recomimg, highlightthickness=0, borderwidth=0)
+    recombtn.grid(row=1, column=1, columnspan=1)
+    tripimg = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Tripbtn.png")
+    tripbtn = Button(brochure, image=tripimg, highlightthickness=0, borderwidth=0, command=myt_page)
+    tripbtn.grid(row=1, column=2, columnspan=1)
+    reviewimg = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Reviewbtn.png")
+    reviewbtn = Button(brochure, image=reviewimg, highlightthickness=0, borderwidth=0, command=review_page)
+    reviewbtn.grid(row=1, column=3, columnspan=1)
+    outputlabel = tk.Text(brochure, height=25, width=45, state=tk.NORMAL, bg="#1D3C37", fg="#F8D26B")
     outputlabel.insert("end", desired_text + "\n")
-    outputlabel.grid(row=1,column=0, columnspan=4)
+    outputlabel.grid(row=2,column=0, columnspan=4)
     brochure.mainloop()
 
-def login_page():
-    login = tk.Tk()
-    login.geometry("360x640")
-    login.title("Welcome to Eco-Touri")
-    login.configure(bg="#1D3C37")
-    
-    def kill_login():
-        login.destroy()
-    
-    def confirm_btn():
-        kill_login()
+def logup():
+    def kill_myself():
+        root.destroy()
+    def login_success():
+        kill_myself()
         myt_page()
+    def read_user_data():
+        user_data = {}
+        try:
+            with open("user_data_final.txt", "r") as file:
+                lines = file.readlines()
+                for line in lines:
+                    username, password, interest, location, age = line.strip().split(',')
+                    user_data[username] = {'password': password, 'interest': interest, 'location': location, 'age': age}
+        except FileNotFoundError:
+            pass
+        return user_data
+    def write_user_data(username, password, interest, location, age):
+        with open("user_data_final.txt", "a") as file:
+            file.write(f"{username},{password},{interest},{location},{age}\n")
+    
+    def login():
+        global Interest, Location, Age
+        username = entry_username.get()
+        password = entry_password.get()
 
-    headingimage = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Loginhead.png")
-    headinglabel = Label(login, image=headingimage, highlightthickness=0, borderwidth=0)
-    headinglabel.grid(row=0, column=0, columnspan=4)
+        user_data = read_user_data()
 
-    usernameimage = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Username.png")
-    username_label = tk.Label(login, image=usernameimage, highlightthickness=0, borderwidth=0)
-    username_label.grid(row=1,column=0,columnspan=4,pady=20)
-
-    username_entry = tk.Entry(login)
-    username_entry.grid(row=2,column=0,columnspan=4,pady=20)
-
-    passwordimage = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Password.png")
-    password_label = tk.Label(login, image=passwordimage, highlightthickness=0, borderwidth=0)
-    password_label.grid(row=3,column=0,columnspan=4, pady=20)
-
-    password_entry = tk.Entry(login, show="*") 
-    password_entry.grid(row=4,column=0,columnspan=4,pady=20)
-
-    def validate_login():
-        userid = username_entry.get()
-        password = password_entry.get()
-
-        if userid == "" and password == "":
-            messagebox.showinfo("Login Successful", "Welcome, Admin!")
-            confirm_btn()
+        if username in user_data and user_data[username]['password'] == password:
+            user_info = user_data[username]
+            messagebox.showinfo("Login Successful", "Welcome back, " + username)
+            print("User Information:")
+            print("Username:", username)
+            Interest = user_info['interest']
+            Location = user_info['location']
+            Age =  user_info['age']
+            login_success()
         else:
             messagebox.showerror("Login Failed", "Invalid username or password")
+    def signup():
+        username = entry_username.get()
+        password = entry_password.get()
+        interest = entry_interest.get()
+        location = entry_location.get()
+        age = entry_age.get()
 
-    confirmimage = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Confirmbtn.png")
-    confirm_button = tk.Button(login, image=confirmimage, command=validate_login, highlightthickness=0, borderwidth=0)
-    confirm_button.grid(row=5,column=0,columnspan=4,pady=20)
+        user_data = read_user_data()
 
+        if username in user_data:
+            messagebox.showerror("Signup Failed", "Username already exists. Choose a different username.")
+        else:
+            write_user_data(username, password, interest, location, age)
+            entry_age.delete(0,END)
+            entry_username.delete(0,END)
+            entry_location.delete(0,END)
+            entry_interest.delete(0,END)
+            entry_password.delete(0,END)
+            messagebox.showinfo("Signup Successful", "Account created successfully. You can now log in.")
+    
+    root = tk.Tk()
+    root.title("Login/Signup")
+    root.geometry("360x640")
+    root.configure(bg="#1D3C37")
 
-    login.mainloop()
+    headingimage = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Loguphead.png")
+    headinglabel = Label(root, image=headingimage, highlightthickness=0, borderwidth=0)
+    headinglabel.grid(row=0, column=0, columnspan=4)
+    
+    # Username and Password
+    userimage = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Usernamelbl.png")
+    label_username = tk.Label(root, text="Username:", image=userimage, highlightthickness=0, borderwidth=0)
+    label_username.grid(row=1, column=0, columnspan=4, pady=7)
+    entry_username = tk.Entry(root)
+    entry_username.grid(row=2, column=0, columnspan=4, pady=7)
+
+    passimage = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Passwordlbl.png")
+    label_password = tk.Label(root, text="Password:", image=passimage, highlightthickness=0, borderwidth=0)
+    label_password.grid(row=3, column=0, columnspan=4, pady=7)
+    entry_password = tk.Entry(root, show="*")
+    entry_password.grid(row=4, column=0, columnspan=4, pady=7)
+
+    # Interest, Location, Age
+    intimage = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Interestslbl.png")
+    label_interest = tk.Label(root, text="Interest:",image=intimage, highlightthickness=0, borderwidth=0)
+    label_interest.grid(row=5, column=0, columnspan=4, pady=7)
+    entry_interest = tk.Entry(root)
+    entry_interest.grid(row=6, column=0, columnspan=4, pady=7)
+
+    locimage = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Locationlbl.png")
+    label_location = tk.Label(root, text="Location:",image=locimage, highlightthickness=0, borderwidth=0)
+    label_location.grid(row=7, column=0, columnspan=4, pady=7)
+    entry_location = tk.Entry(root)
+    entry_location.grid(row=8, column=0, columnspan=4, pady=7)
+
+    ageimage = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Agelbl.png")
+    label_age = tk.Label(root, text="Age:",image=ageimage, highlightthickness=0, borderwidth=0)
+    label_age.grid(row=9, column=0, columnspan=4)
+    entry_age = tk.Entry(root)
+    entry_age.grid(row=10, column=0, columnspan=4)
+        
+    # Buttons
+    loginimage = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Loginfrbtn.png")
+    btn_login = tk.Button(root, text="Login", command=login, image=loginimage, highlightthickness=0, borderwidth=0)
+    btn_login.grid(row=11, column=0,pady=10, columnspan=2)
+
+    signupimage = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Signupbtn.png")
+    btn_signup = tk.Button(root, text="Signup", command=signup, image=signupimage, highlightthickness=0, borderwidth=0)
+    btn_signup.grid(row=11, column=2,pady=10, columnspan=2)
+    
+    fineprintimage = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Fineprint.png")
+    fineprintlbl = Label(root, image=fineprintimage)
+    fineprintlbl.grid(row=12,column=0,columnspan=4)
+
+    root.mainloop()
+
 
 def home_page():
     global x
@@ -269,7 +352,7 @@ def home_page():
 
     def login_btn():
         close_window()
-        login_page()
+        logup()
 
     headingimage = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Heading.png")
     headinglabel = Label(home, image=headingimage, highlightthickness=0, borderwidth=0)
