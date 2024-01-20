@@ -4,6 +4,7 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import os
 import time
+import ast
 from tkinter import messagebox
 from llama_cpp import Llama
 
@@ -91,6 +92,7 @@ def review_page():
 
 def myt_page():
     def submit_form():
+        global desired_text
         place = country_entry.get()
         budget = budget_entry.get()
         interest = interests_entry.get()
@@ -112,11 +114,23 @@ def myt_page():
         <</SYS>>
         {user_input_message} [/INST]"""
         # Specifies the max tokens
-        max_tokens = 1000
+        max_tokens = 2000
         # Generates the information
         output = model(prompt, max_tokens=max_tokens, echo=True)
-        # Printing the output
-        print(output)
+        plain_string = str(output)
+        response_dict = ast.literal_eval(plain_string)
+        desired_text = response_dict['choices'][0]['text']
+        response = str(desired_text)
+        # Find the start and end of the relevant text within the response
+        start_tag = "[INST] <<SYS>>"
+        end_tag = "[/INST]"
+        start_index = response.find(start_tag) + len(start_tag)
+        end_index = response.find(end_tag)
+        # Extract the desired text
+        desired_text = response[end_index + len(end_tag):].strip()
+        # Print the cleaned text
+        print(desired_text)
+        brochure_page()
 
      #Create main window
     tpad = tk.Tk()
@@ -183,6 +197,17 @@ def myt_page():
     # Start the Tkinter event loop
     tpad.mainloop()
 
+def brochure_page():
+    brochure = tk.Toplevel()
+    brochure.geometry("360x640")
+    brochure.configure(bg="#1D3C37")
+    brochureheadimg = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Brochurehead.png")
+    brochurehead = Label(brochure, image=brochureheadimg, highlightthickness=0, borderwidth=0)
+    brochurehead.grid(row=0,column=0,columnspan=4)
+    outputlabel = tk.Text(brochure, height=20, width=45, state=tk.NORMAL, bg="#1D3C37", fg="#F8D26B")
+    outputlabel.insert("end", desired_text + "\n")
+    outputlabel.grid(row=1,column=0, columnspan=4)
+    brochure.mainloop()
 
 def login_page():
     login = tk.Tk()
@@ -219,7 +244,7 @@ def login_page():
         userid = username_entry.get()
         password = password_entry.get()
 
-        if userid == "admin" and password == "password":
+        if userid == "" and password == "":
             messagebox.showinfo("Login Successful", "Welcome, Admin!")
             confirm_btn()
         else:
