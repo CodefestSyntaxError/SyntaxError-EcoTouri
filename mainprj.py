@@ -96,6 +96,9 @@ def myt_page():
     def recomclick():
         kill_myself()
         findadestination()
+    def homeclick():
+        kill_myself()
+        home_page()
     def submit_form():
         global desired_text
         place = country_entry.get()
@@ -112,14 +115,14 @@ def myt_page():
 
         # Training message and user input message for generating information
         training_message = "(Note: If any of the inputs seems to be incorrect, display error input not valid and stop generation)You are a factual and reliable assistant that provides true information and text on various Eco-sustainable hotels, restaurants, best modes of sustainable transportation, various places to see and observe in the area and also the carbon footprint that has been emitted through this entire tourist place vacation plan."
-        user_input_message = f"{place}:3 Best eco-friendly hotel to visit,2 best eco-friendly transport methods,3 best eco-friendly restaurant, the 4 eco-friendly places to visit in with a budget of {budget} with the interests/hobby {interest} with a total of {family} people in their travel group, traveling for a total of {days}, currently living in {Location}, at the age of {Age}, with the Interests {Interest}.Please take all into consideration and respond"
+        user_input_message = f"{place}:1 Best eco-friendly hotel to visit,1 best eco-friendly transport methods,1 best eco-friendly restaurant, the 2 eco-friendly places to visit in with a budget of {budget} with the interests/hobby {interest} with a total of {family} people in their travel group, traveling for a total of {days}, currently living in {Location}, at the age of {Age}, with the Interests {Interest}.Please take all into consideration and respond"
         # Initiates the Llama to generate the information
         prompt = f"""<s>[INST] <<SYS>>
         {training_message}
         <</SYS>>
         {user_input_message} [/INST]"""
         # Specifies the max tokens
-        max_tokens = 6000
+        max_tokens = 10000
         # Generates the information
         output = model(prompt, max_tokens=max_tokens, echo=True)
         plain_string = str(output)
@@ -151,7 +154,7 @@ def myt_page():
     headinglabel = Label(tpad, image=headingimage, highlightthickness=0, borderwidth=0)
     headinglabel.grid(row=0, column=0, columnspan=4)
     homeimg = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Homebtn.png")
-    homebtn = Button(tpad, image=homeimg, highlightthickness=0, borderwidth=0)
+    homebtn = Button(tpad, image=homeimg, highlightthickness=0, borderwidth=0, command=homeclick)
     homebtn.grid(row=1, column=0, columnspan=1)
     recomimg = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Recombtn.png")
     recombtn = Button(tpad, image=recomimg, highlightthickness=0, borderwidth=0, command=recomclick)
@@ -203,6 +206,12 @@ def myt_page():
     tpad.mainloop()
 
 def brochure_page():
+    
+    def kill_myself():
+        brochure.destroy()
+    def home_btn():
+        home_page()
+        kill_myself()
     brochure = tk.Toplevel()
     brochure.geometry("360x640")
     brochure.configure(bg="#1D3C37")
@@ -471,6 +480,14 @@ def home_page():
     def login_btn():
         close_window()
         logup()
+    
+    def recom_btn():
+        close_window()
+        findadestination()
+
+    def myt_btn():
+        close_window()
+        myt_page()
 
     headingimage = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Heading.png")
     headinglabel = Label(home, image=headingimage, highlightthickness=0, borderwidth=0)
@@ -479,10 +496,10 @@ def home_page():
     homebtn = Button(home, image=homeimg, highlightthickness=0, borderwidth=0)
     homebtn.grid(row=1, column=0, columnspan=1)
     recomimg = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Recombtn.png")
-    recombtn = Button(home, image=recomimg, highlightthickness=0, borderwidth=0)
+    recombtn = Button(home, image=recomimg, highlightthickness=0, borderwidth=0, command=recom_btn)
     recombtn.grid(row=1, column=1, columnspan=1)
     tripimg = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Tripbtn.png")
-    tripbtn = Button(home, image=tripimg, highlightthickness=0, borderwidth=0, command=myt_page)
+    tripbtn = Button(home, image=tripimg, highlightthickness=0, borderwidth=0, command=myt_btn)
     tripbtn.grid(row=1, column=2, columnspan=1)
     reviewimg = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Reviewbtn.png")
     reviewbtn = Button(home, image=reviewimg, highlightthickness=0, borderwidth=0, command=review_page)
