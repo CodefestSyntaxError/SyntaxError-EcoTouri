@@ -91,6 +91,11 @@ def review_page():
     review.mainloop()
 
 def myt_page():
+    def kill_myself():
+        tpad.destroy()
+    def recomclick():
+        kill_myself()
+        findadestination()
     def submit_form():
         global desired_text
         place = country_entry.get()
@@ -149,7 +154,7 @@ def myt_page():
     homebtn = Button(tpad, image=homeimg, highlightthickness=0, borderwidth=0)
     homebtn.grid(row=1, column=0, columnspan=1)
     recomimg = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Recombtn.png")
-    recombtn = Button(tpad, image=recomimg, highlightthickness=0, borderwidth=0)
+    recombtn = Button(tpad, image=recomimg, highlightthickness=0, borderwidth=0, command=recomclick)
     recombtn.grid(row=1, column=1, columnspan=1)
     tripimg = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Tripbtn.png")
     tripbtn = Button(tpad, image=tripimg, highlightthickness=0, borderwidth=0, command=myt_page)
@@ -223,6 +228,120 @@ def brochure_page():
     outputlabel.insert("end", desired_text + "\n")
     outputlabel.grid(row=2,column=0, columnspan=4)
     brochure.mainloop()
+
+def findadestination():
+    global desired_text
+    def llm():
+        global desired_text
+        # Specifying the model path (Mistral.gguf)
+        model_path = "C:\\Users\\admin\\Desktop\\Codefest\\mistral-7b-instruct-v0.2.Q6_K.gguf"
+
+        # Model variable
+        model = Llama(model_path=model_path)
+
+        # Training message and user input message for generating information
+        training_message = "One word answer to the question, ONLY ONE WORD(COUNTRY NAME)"
+        user_input_message = f"(Only one word)Best country for a person who likes to go to {continent_value}, for a period of {time_of_living_value}, in a {climate_preferences} climate who lives in {Location}, at the age of {Age}, and loves to {Interest}."
+        # Initiates the Llama to generate the information
+        prompt = f"""<s>[INST] <<SYS>>
+        {training_message}
+        <</SYS>>
+        {user_input_message} [/INST]"""
+        # Specifies the max tokens
+        max_tokens = 100
+        # Generates the information
+        output = model(prompt, max_tokens=max_tokens, echo=True)
+        plain_string = str(output)
+        response_dict = ast.literal_eval(plain_string)
+        desired_text = response_dict['choices'][0]['text']
+        response = str(desired_text)
+        # Find the start and end of the relevant text within the response
+        start_tag = "[INST] <<SYS>>"
+        end_tag = "[/INST]"
+        start_index = response.find(start_tag) + len(start_tag)
+        end_index = response.find(end_tag)
+        # Extract the desired text
+        desired_text = response[end_index + len(end_tag):].strip()
+        outputlabel = tk.Text(root, height=25, width=45, state=tk.NORMAL, bg="#1D3C37", fg="#F8D26B")
+        outputlabel.insert("end", desired_text + "\n")
+        outputlabel.grid(row=9,column=0, columnspan=4, sticky=W)
+    def submit_form():
+        global continent_value, time_of_living_value, climate_preferences
+        continent_value = continent_var.get()
+        time_of_living_value = time_of_living_entry.get()
+
+        climate_preferences = []
+        if sunny_var.get():
+            climate_preferences.append("Sunny")
+        if windy_var.get():
+            climate_preferences.append("Windy")
+        if rainy_var.get():
+            climate_preferences.append("Rainy")
+        if snowy_var.get():
+            climate_preferences.append("Snowy")
+        if humid_var.get():
+            climate_preferences.append("Humid")
+
+        climate_preferences_str = ", ".join(climate_preferences)
+
+        result_text = f"Continent: {continent_value}\nTime of Living: {time_of_living_value}\nClimate Preferences: {climate_preferences_str}"
+        llm()
+        
+    root = tk.Tk()
+    root.title("Travel Planner")
+    root.geometry("360x640")
+    root.config(bg = "#1D3C37")
+
+    headingimage = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_FYDhead.png")
+    headinglabel = Label(root, image=headingimage, highlightthickness=0, borderwidth=0)
+    headinglabel.grid(row=0, column=0, columnspan=4)
+
+    btnimage = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Buttons.png")
+    btnlabel = Label(root, image=btnimage, highlightthickness=0, borderwidth=0)
+    btnlabel.grid(row=1, column=0, columnspan=4)
+
+    continent_img = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Continent.png")
+    tk.Label(root, image=continent_img, borderwidth=0).grid(row=2, column=0, padx=10, pady=5, columnspan=4, sticky=W)
+    continent_var = tk.StringVar()
+    continent_choices = ["Asia", "Africa", "North America", "South America", "Europe", "Australia", "Antarctica"]
+    continent_dropdown = tk.OptionMenu(root, continent_var, *continent_choices)
+    continent_dropdown.grid(row=2, column=2, padx=25, pady=5, sticky=W)
+
+    time_of_living_img = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Days.png")
+    tk.Label(root, image=time_of_living_img, borderwidth=0).grid(row=3, column=0, pady=5, columnspan=70, sticky=W)
+    time_of_living_entry = tk.Entry(root)
+    time_of_living_entry.grid(row=3, column=2, pady=5, columnspan=3, sticky=W)
+
+    # Label for climate preferences
+    pref_weather_img = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Weather.png")
+    tk.Label(root, image=pref_weather_img, borderwidth=0).grid(row=4, column=0, columnspan=3, pady=5, sticky=W)
+
+    # Create and place checkbox options for climate preferences with images
+    sunny_var = IntVar()
+    windy_var = IntVar()
+    rainy_var = IntVar()
+    snowy_var = IntVar()
+    humid_var = IntVar()
+
+    sunny_img = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Sun.png")
+    tk.Checkbutton(root, image=sunny_img, variable=sunny_var).grid(row=5, column=0, pady=5,columnspan=1, sticky=W,padx=30)
+    windy_img = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Windy.png")
+    tk.Checkbutton(root, image=windy_img, variable=windy_var).grid(row=5, column=1, pady=5, sticky= W,padx=30)
+    rainy_img = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Rainy.png")
+    tk.Checkbutton(root, image=rainy_img, variable=rainy_var).grid(row=6, column=0, pady=5, sticky=W,padx=30)
+    snowy_img = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Snowy.png")
+    tk.Checkbutton(root, image=snowy_img, variable=snowy_var).grid(row=6, column=1, pady=5, sticky=W,padx=30)
+    humid_img = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Humid.png")
+    tk.Checkbutton(root, image=humid_img, variable=humid_var).grid(row=6, column=2, columnspan=2,padx=30, sticky=W)
+
+    
+    # Create and place submit button with image
+    submit_img = ImageTk.PhotoImage(file="C:\\Users\\admin\\Desktop\\Codefest\\Eco-Touri_Submitbtn.png")
+    submit_button = tk.Button(root, image=submit_img, command=submit_form, borderwidth=0, highlightthickness=0)
+    submit_button.grid(row=8, column=0, columnspan=4, pady=20)
+
+    # Start the Tkinter event loop
+    root.mainloop()
 
 def logup():
     def kill_myself():
@@ -338,7 +457,6 @@ def logup():
     fineprintlbl.grid(row=12,column=0,columnspan=4)
 
     root.mainloop()
-
 
 def home_page():
     global x
